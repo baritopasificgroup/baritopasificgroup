@@ -280,7 +280,8 @@
             border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 24px; margin-bottom: 20px;
         }
 
-        /* --- 9. MODAL --- */
+        /* --- 9. MODAL (Untuk News & Gambar) --- */
+        /* Modal Text News */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.8); z-index: 1000;
@@ -297,6 +298,36 @@
         .close-modal {
             position: absolute; top: 25px; right: 25px; font-size: 24px;
             color: var(--text-muted); cursor: pointer;
+        }
+
+        /* === NEW CSS: IMAGE LIGHTBOX MODAL === */
+        #lightboxModal {
+            position: fixed; z-index: 2000; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.95); /* Lebih gelap dari news modal */
+            display: none; /* Sembunyi default */
+            justify-content: center; align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        
+        .lightbox-img {
+            max-width: 90%; max-height: 90vh;
+            border-radius: 8px;
+            box-shadow: 0 0 50px rgba(16, 185, 129, 0.2);
+            animation: zoomIn 0.3s ease;
+            object-fit: contain;
+        }
+
+        .lightbox-close-btn {
+            position: absolute; top: 30px; right: 40px;
+            color: #f1f1f1; font-size: 40px; font-weight: bold;
+            cursor: pointer; transition: 0.3s; z-index: 2001;
+        }
+        .lightbox-close-btn:hover { color: var(--primary); transform: scale(1.1); }
+
+        @keyframes zoomIn {
+            from {transform: scale(0.8); opacity: 0;} 
+            to {transform: scale(1); opacity: 1;}
         }
 
         /* Hero Slider */
@@ -540,9 +571,33 @@
             <span class="subtitle">Dokumentasi & Aset</span>
             <h1 class="page-title">Galeri Operasional</h1>
             
-            <p style="color: var(--text-muted); margin-bottom: 25px;">Portofolio aset strategis dan program keberlanjutan Barito Pacific Group.</p>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Portofolio aset strategis dan program keberlanjutan Barito Pacific Group. (Klik gambar untuk memperbesar)</p>
 
             <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="kampanye-energi.jpg" alt="Kampanye Energi Hijau">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Kampanye Strategis</span>
+                        <div class="gallery-title">Energi Hijau Masa Depan</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-calendar-check"></i> Peluncuran: 28 Nov 2025</div>
+                        <p class="gallery-desc">
+                            Inisiatif kolaboratif Barito Pacific Tbk bersama KLHK dan Sekolah Adiwiyata. Bertujuan meningkatkan kesadaran lingkungan melalui edukasi energi terbarukan demi menciptakan bumi berkelanjutan untuk generasi mendatang.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="WhatsApp Image 2025-11-26 at 21.48.05.jpeg" alt="Workshop Panel Surya">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Edukasi & CSR</span>
+                        <div class="gallery-title">Workshop Panel Surya Mini</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-school"></i> 50 Sekolah Adiwiyata Nasional</div>
+                        <p class="gallery-desc">
+                            Program pelatihan praktis bagi siswa untuk membuat panel surya sederhana dan penanaman bibit pohon endemik. Membangun agen perubahan yang sadar akan pentingnya transisi dari bahan bakar fosil ke energi bersih.
+                        </p>
+                    </div>
+                </div>
+
                 <div class="gallery-item">
                     <img src="https://photos.idnfinancials.com/static/web/2025/CANDRA%20ASRI%20TPIA.jpg" alt="Chandra Asri">
                     <div class="gallery-overlay">
@@ -550,7 +605,7 @@
                         <div class="gallery-title">Kompleks Chandra Asri Pacific</div>
                         <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Cilegon, Banten</div>
                         <p class="gallery-desc">
-                            Kompleks petrokimia terintegrasi terbesar di Indonesia. Memproduksi Olefins dan Polyolefins sebagai bahan baku vital bagi industri hilir nasional, mendukung kemandirian manufaktur Indonesia.
+                            Kompleks petrokimia terintegrasi terbesar di Indonesia. Memproduksi Olefins dan Polyolefins sebagai bahan baku vital bagi industri hilir nasional.
                         </p>
                     </div>
                 </div>
@@ -562,7 +617,7 @@
                         <div class="gallery-title">Star Energy Wayang Windu</div>
                         <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Bandung, Jawa Barat</div>
                         <p class="gallery-desc">
-                            Pembangkit listrik tenaga panas bumi (PLTP) kelas dunia dengan efisiensi tinggi. Berkontribusi signifikan dalam pengurangan emisi karbon dan mendukung transisi energi nasional menuju Net Zero.
+                            Pembangkit listrik tenaga panas bumi (PLTP) kelas dunia dengan efisiensi tinggi. Berkontribusi signifikan dalam pengurangan emisi karbon.
                         </p>
                     </div>
                 </div>
@@ -574,36 +629,12 @@
                         <div class="gallery-title">Griya Idola Industrial Park</div>
                         <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Cikupa, Tangerang</div>
                         <p class="gallery-desc">
-                            Kawasan industri modern dan terintegrasi yang dirancang untuk mendukung operasional bisnis yang efisien. Dilengkapi infrastruktur canggih dan manajemen kawasan profesional.
+                            Kawasan industri modern dan terintegrasi yang dirancang untuk mendukung operasional bisnis yang efisien.
                         </p>
                     </div>
                 </div>
-
+                 
                 <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?auto=format&fit=crop&w=800&q=80" alt="CSR Bakti Barito">
-                    <div class="gallery-overlay">
-                        <span class="gallery-cat">Yayasan Bakti Barito</span>
-                        <div class="gallery-title">Program Pendidikan & Lingkungan</div>
-                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Sekolah Adiwiyata</div>
-                        <p class="gallery-desc">
-                            Komitmen sosial melalui inisiatif "Green Guardian", fokus pada peningkatan kualitas pendidikan dan kesadaran lingkungan di sekolah-sekolah sekitar area operasional perusahaan.
-                        </p>
-                    </div>
-                </div>
-
-                <div class="gallery-item">
-                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="Office">
-                    <div class="gallery-overlay">
-                        <span class="gallery-cat">Headquarters</span>
-                        <div class="gallery-title">Wisma Barito Pacific</div>
-                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Slipi, Jakarta Barat</div>
-                        <p class="gallery-desc">
-                            Pusat pengambilan keputusan strategis dan tata kelola perusahaan. Menjadi simbol integritas dan inovasi dalam mengarahkan pertumbuhan berkelanjutan grup Barito Pacific.
-                        </p>
-                    </div>
-                </div>
-
-                 <div class="gallery-item">
                     <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Sustainability Report Data">
                     <div class="report-icon-overlay">
                         <i class="fa-solid fa-file-pdf fa-xl" style="color: var(--primary);"></i>
@@ -612,7 +643,7 @@
                         <div class="gallery-title">Sustainability Report 2024</div>
                         <div class="gallery-loc"><i class="fa-solid fa-file-arrow-down"></i> Unduh Dokumen PDF</div>
                         <p class="gallery-desc">
-                            Dokumen lengkap transparansi kinerja Lingkungan, Sosial, dan Tata Kelola (ESG) Barito Pacific Group. Menegaskan komitmen kami terhadap pertumbuhan yang berkelanjutan dan bertanggung jawab.
+                            Dokumen lengkap transparansi kinerja Lingkungan, Sosial, dan Tata Kelola (ESG) Barito Pacific Group.
                         </p>
                     </div>
                 </div>
@@ -663,6 +694,11 @@
                 <button class="btn-glow" onclick="closeModal()">Tutup</button>
             </div>
         </div>
+    </div>
+
+    <div id="lightboxModal">
+        <span class="lightbox-close-btn" onclick="closeLightbox()">&times;</span>
+        <img class="lightbox-img" id="lightboxImg">
     </div>
 
     <script>
@@ -771,12 +807,36 @@
             if(news) {
                 document.getElementById('modalCategory').innerText = news.category;
                 document.getElementById('modalTitle').innerText = news.title;
-                document.getElementById('modalBody').innerHTML = news.fullContent; // Changed to innerHTML for HTML content support
+                document.getElementById('modalBody').innerHTML = news.fullContent;
                 document.getElementById('newsModal').classList.add('open');
             }
         }
         function closeModal() { document.getElementById('newsModal').classList.remove('open'); }
         document.getElementById('newsModal').addEventListener('click', function(e) { if(e.target === this) closeModal(); });
+
+        /* === NEW SCRIPT: IMAGE LIGHTBOX LOGIC === */
+        const lightboxModal = document.getElementById('lightboxModal');
+        const lightboxImg = document.getElementById('lightboxImg');
+        const galleryImages = document.querySelectorAll('.gallery-item img');
+
+        // Tambahkan event click ke semua gambar di galeri
+        galleryImages.forEach(img => {
+            img.addEventListener('click', function() {
+                lightboxModal.style.display = 'flex'; // Munculkan modal
+                lightboxImg.src = this.src; // Ambil src gambar yang diklik
+            });
+        });
+
+        // Fungsi Tutup Lightbox (Klik X atau Klik Area Gelap)
+        function closeLightbox() {
+            lightboxModal.style.display = 'none';
+        }
+
+        lightboxModal.addEventListener('click', function(e) {
+            if (e.target === lightboxModal) {
+                closeLightbox();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', () => { renderNews('all'); });
     </script>
