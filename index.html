@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barito Pacific - Integrated Corporate Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- 1. SETUP VARIABEL & BASE (Premium Dark Theme) --- */
+        :root {
+            --bg-dark: #0b1120;
+            --primary: #10b981;       /* Emerald Green */
+            --primary-glow: rgba(16, 185, 129, 0.4);
+            --accent-blue: #3b82f6;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            
+            /* Complex Glass Effect Variables */
+            --glass-bg: linear-gradient(145deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.6) 100%);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(16, 185, 129, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(59, 130, 246, 0.08), transparent 25%);
+        }
+
+        /* --- 2. SIDEBAR NAVIGASI --- */
+        .sidebar {
+            width: 280px;
+            background: rgba(15, 23, 42, 0.95);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            padding: 35px 25px;
+            z-index: 20;
+            backdrop-filter: blur(10px);
+            box-shadow: 5px 0 30px rgba(0,0,0,0.2);
+        }
+
+        .brand {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text-main);
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+        .brand i { color: var(--primary); filter: drop-shadow(0 0 8px var(--primary)); }
+        .brand span { color: var(--primary); }
+
+        .nav-menu { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+        
+        .nav-btn {
+            padding: 14px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 500;
+            font-size: 13.5px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-muted);
+            border: 1px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.03);
+            color: var(--text-main);
+            border-color: rgba(255, 255, 255, 0.05);
+            transform: translateX(3px);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.15), transparent);
+            color: var(--primary);
+            border-left: 3px solid var(--primary);
+            border-radius: 4px 10px 10px 4px;
+            box-shadow: inset 10px 0 20px -10px rgba(16, 185, 129, 0.2);
+        }
+        
+        .nav-btn.active i { transform: scale(1.1); }
+
+        /* --- 3. MAIN CONTENT AREA --- */
+        .main-container {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .slide-section {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            padding: 50px 70px; opacity: 0; visibility: hidden;
+            transform: translateY(30px) scale(0.96);
+            transition: all 0.7s cubic-bezier(0.2, 0.8, 0.2, 1);
+            overflow-y: auto; padding-bottom: 120px;
+        }
+
+        .slide-section.active {
+            opacity: 1; visibility: visible; transform: translateY(0) scale(1); z-index: 5;
+        }
+
+        /* Typography */
+        h1.page-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.8rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            margin-bottom: 15px;
+            background: linear-gradient(120deg, #fff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 2px 10px rgba(0,0,0,0.3));
+        }
+        
+        .subtitle { 
+            color: var(--primary); letter-spacing: 3px; text-transform: uppercase; 
+            font-size: 0.75rem; font-weight: 700; margin-bottom: 10px; display: inline-block;
+            background: rgba(16, 185, 129, 0.1); padding: 5px 12px; border-radius: 20px;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        /* --- 4. CARDS & GRID --- */
+        .grid-container {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px;
+        }
+
+        .card {
+            background: var(--glass-bg); border: var(--glass-border); padding: 30px;
+            border-radius: 20px; backdrop-filter: blur(12px); box-shadow: var(--glass-shadow);
+            transition: all 0.4s ease; position: relative; overflow: hidden;
+        }
+
+        .card:hover {
+            transform: translateY(-8px); border-color: rgba(16, 185, 129, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-glow {
+            padding: 12px 30px; background: rgba(16, 185, 129, 0.05);
+            border: 1px solid var(--primary); color: var(--primary);
+            font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.3s;
+            text-decoration: none; display: inline-block; font-size: 12px; text-transform: uppercase;
+        }
+        .btn-glow:hover {
+            background: var(--primary); color: #fff; box-shadow: 0 0 25px var(--primary-glow);
+        }
+
+        /* --- 5. GALERI ASET (MASONRY GRID & COMPLEX HOVER) --- */
+        .gallery-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; margin-top: 20px;
+        }
+
+        .gallery-item {
+            position: relative; border-radius: 16px; overflow: hidden;
+            height: 350px; cursor: pointer; border: 1px solid rgba(255,255,255,0.1);
+            background: #000; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .gallery-item img {
+            width: 100%; height: 100%; object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1); opacity: 0.9;
+        }
+
+        .gallery-item:hover img { transform: scale(1.1); opacity: 0.5; }
+
+        .gallery-overlay {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(0deg, rgba(11, 17, 32, 1) 0%, rgba(11, 17, 32, 0.8) 50%, transparent 100%);
+            padding: 30px 25px; transform: translateY(60px); 
+            transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            transform: translateY(0); background: linear-gradient(0deg, rgba(11, 17, 32, 1) 30%, rgba(11, 17, 32, 0.9) 100%);
+        }
+
+        .gallery-cat {
+            font-size: 10px; color: var(--primary); text-transform: uppercase;
+            letter-spacing: 1.5px; font-weight: 700; margin-bottom: 8px; display: block;
+        }
+        .gallery-title { font-family: 'Montserrat', sans-serif; font-size: 18px; color: #fff; font-weight: 700; margin-bottom: 8px; }
+        .gallery-loc { font-size: 12px; color: #cbd5e1; display: flex; align-items: center; gap: 6px; margin-bottom: 15px; }
+        
+        .gallery-desc {
+            font-size: 13px; color: #94a3b8; line-height: 1.6;
+            opacity: 0; transform: translateY(10px); transition: 0.3s 0.1s;
+            display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .gallery-item:hover .gallery-desc { opacity: 1; transform: translateY(0); }
+
+        /* Report Icon Overlay */
+        .report-icon-overlay {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 70px; height: 70px; background: rgba(16, 185, 129, 0.2);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            backdrop-filter: blur(5px); border: 1px solid rgba(16, 185, 129, 0.4);
+            z-index: 2; transition: 0.3s;
+        }
+        .gallery-item:hover .report-icon-overlay { transform: translate(-50%, -50%) scale(1.1); background: var(--primary); }
+        .gallery-item:hover .report-icon-overlay i { color: #fff; }
+
+        /* --- 6. OFFICIAL WEB TAB & QUICK LINKS --- */
+        .web-header {
+            background: linear-gradient(90deg, rgba(30, 41, 59, 0.8), rgba(30, 41, 59, 0.3));
+            padding: 25px; border-radius: 16px; border-left: 5px solid var(--primary);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 35px;
+        }
+        .stock-ticker {
+            font-family: 'Inter', monospace; color: var(--primary);
+            background: rgba(0,0,0,0.4); padding: 8px 18px; border-radius: 6px; font-size: 13px;
+        }
+        .article-layout { display: grid; grid-template-columns: 2.2fr 1fr; gap: 30px; }
+        
+        .article-card {
+            background: #fff; border-radius: 16px; overflow: hidden; margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2); transition: 0.3s;
+        }
+        .article-card:hover { transform: translateY(-5px); }
+        .article-img { height: 220px; width: 100%; object-fit: cover; }
+        .article-content { padding: 25px; }
+        .tag { background: var(--bg-dark); color: var(--primary); padding: 5px 12px; font-size: 10px; border-radius: 4px; font-weight: 700; text-transform: uppercase; }
+        .web-link {
+            color: var(--bg-dark); font-weight: 700; text-decoration: none; 
+            font-size: 13px; margin-top: 15px; display: inline-flex; align-items: center; gap: 5px;
+            border-bottom: 2px solid var(--primary); padding-bottom: 2px;
+        }
+
+        /* --- CSS KHUSUS UNTUK QUICK LINKS (WHITE TEXT) --- */
+        .quick-link-list li a { color: #ffffff !important; text-decoration: none; width: 100%; font-size: 14px; transition: 0.3s; }
+        .quick-link-list li i { color: #ffffff !important; }
+        .quick-link-list li:hover a, .quick-link-list li:hover i { color: var(--primary) !important; padding-left: 5px; }
+
+        /* --- 7. NEWS & FILTER --- */
+        .filter-container { display: flex; gap: 12px; margin-bottom: 30px; }
+        .filter-btn {
+            padding: 10px 24px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.1);
+            background: transparent; color: var(--text-muted); cursor: pointer; transition: 0.3s;
+        }
+        .filter-btn.active { background: var(--primary); color: #000; border-color: var(--primary); font-weight: 700; }
+        .news-item { display: flex; gap: 25px; padding: 25px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .news-date {
+            background: rgba(15, 23, 42, 0.6); padding: 12px; border-radius: 12px; 
+            text-align: center; min-width: 80px; border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--primary); font-weight: bold;
+        }
+
+        /* --- 8. ORGANISASI --- */
+        .org-section { margin-top: 50px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .org-card { border-left: 4px solid var(--primary); background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, transparent 100%); margin-bottom: 20px; }
+        .portfolio-icon {
+            width: 60px; height: 60px; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 24px; margin-bottom: 20px;
+        }
+
+        /* --- 9. MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.8); z-index: 1000;
+            display: flex; justify-content: center; align-items: center;
+            opacity: 0; visibility: hidden; transition: 0.4s ease; backdrop-filter: blur(8px);
+        }
+        .modal-overlay.open { opacity: 1; visibility: visible; }
+        .modal-content {
+            background: #1e293b; width: 90%; max-width: 650px;
+            border-radius: 20px; padding: 40px; border: 1px solid rgba(255,255,255,0.1);
+            transform: scale(0.9); transition: 0.4s;
+        }
+        .modal-overlay.open .modal-content { transform: scale(1); }
+        .close-modal {
+            position: absolute; top: 25px; right: 25px; font-size: 24px;
+            color: var(--text-muted); cursor: pointer;
+        }
+
+        /* Hero Slider */
+        .hero-slider-box {
+            width: 100%; height: 320px; border-radius: 20px; overflow: hidden; 
+            position: relative; margin-bottom: 40px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .slide-img { width: 100%; height: 100%; object-fit: cover; animation: zoomEffect 25s infinite alternate; }
+        @keyframes zoomEffect { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+        .overlay-text {
+            position: absolute; bottom: 40px; left: 40px;
+            background: rgba(15, 23, 42, 0.85); padding: 20px 30px;
+            border-left: 4px solid var(--primary); backdrop-filter: blur(10px);
+        }
+        
+        input, textarea {
+            width: 100%; padding: 15px; background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255,255,255,0.1); color: #fff; border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="sidebar">
+        <div class="brand">
+            <i class="fa-solid fa-layer-group"></i> BARITO<span>PACIFIC</span>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-btn active" onclick="switchSlide('home', this)">
+                <i class="fa-solid fa-house"></i> Dashboard
+            </li>
+            <li class="nav-btn" onclick="switchSlide('official-web', this)">
+                <i class="fa-solid fa-globe"></i> Website Resmi
+            </li>
+            <li class="nav-btn" onclick="switchSlide('news', this)">
+                <i class="fa-solid fa-newspaper"></i> Press Release
+            </li>
+            <li class="nav-btn" onclick="switchSlide('profile', this)">
+                <i class="fa-solid fa-building-columns"></i> Profil & Visi
+            </li>
+            <li class="nav-btn" onclick="switchSlide('gallery', this)">
+                <i class="fa-solid fa-images"></i> Galeri Aset
+            </li>
+            <li class="nav-btn" onclick="switchSlide('contact', this)">
+                <i class="fa-solid fa-headset"></i> Hubungi Kami
+            </li>
+        </ul>
+
+        <div style="margin-top: auto; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.1);">
+            <p style="font-size: 11px; color: var(--text-muted); font-weight: 500; text-transform: uppercase; letter-spacing: 1px;">Server Status</p>
+            <div style="display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: #fff;">
+                <span style="width: 10px; height: 10px; background-color: var(--primary); border-radius: 50%; box-shadow: 0 0 10px var(--primary);"></span>
+                Online (Stable)
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-container">
+
+        <div id="home" class="slide-section active">
+            <span class="subtitle">Overview Program</span>
+            <h1 class="page-title">Sistem Integrasi Energi Hijau</h1>
+            
+            <div class="hero-slider-box">
+                <img src="https://images.unsplash.com/photo-1509391366360-2e959784a276?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" class="slide-img">
+                <div class="overlay-text">
+                    <h3 style="margin:0; font-size: 1.5rem; color: #fff; font-family: 'Montserrat', sans-serif;">Target: 1.000 Sekolah Adiwiyata</h3>
+                    <p style="margin-top: 5px; font-size: 14px; color: #cbd5e1;">Mendukung Net Zero Emission 2060</p>
+                </div>
+            </div>
+
+            <div class="grid-container">
+                <div class="card">
+                    <div class="portfolio-icon" style="margin-bottom: 15px;"><i class="fa-solid fa-wallet"></i></div>
+                    <h3>Rp 50 Miliar</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Alokasi dana CSR strategis untuk pembangunan infrastruktur sekolah hijau.</p>
+                </div>
+                <div class="card">
+                    <div class="portfolio-icon" style="color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2); margin-bottom: 15px;"><i class="fa-solid fa-network-wired"></i></div>
+                    <h3>Digitalisasi</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Implementasi kurikulum berbasis web dan modul interaktif modern.</p>
+                </div>
+                <div class="card">
+                    <div class="portfolio-icon" style="color: #eab308; background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.2); margin-bottom: 15px;"><i class="fa-solid fa-bolt"></i></div>
+                    <h3>Energi Mandiri</h3>
+                    <p style="color: var(--text-muted); font-size: 14px; line-height: 1.6;">Instalasi mikro-grid panel surya di lokasi pilot project.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="official-web" class="slide-section">
+            <span class="subtitle">Barito Pacific Network</span>
+            <h1 class="page-title">Portal Korporasi</h1>
+
+            <div class="web-header">
+                <div>
+                    <h3 style="margin: 0; font-size: 1.2rem; color: #fff;">Highlight Kinerja & Berita</h3>
+                    <p style="font-size: 12px; color: var(--text-muted); margin-top: 5px;">Data bersumber dari barito-pacific.com</p>
+                </div>
+                <div style="text-align: right;">
+                    <div class="stock-ticker"><i class="fa-solid fa-chart-line"></i> IDX: BRPT | High: 1.150 IDR</div>
+                    <div style="font-size: 11px; margin-top: 8px; color: var(--primary); font-weight: 600;">*Market Realtime</div>
+                </div>
+            </div>
+
+            <div class="article-layout">
+                <div>
+                    <div class="article-card">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" class="article-img">
+                        <div class="article-content">
+                            <span class="tag">Financial Release</span>
+                            <h3 style="font-size: 1.4rem; margin: 15px 0 10px; color: #0f172a;">Laporan Kinerja Keuangan & Pertumbuhan Laba Bersih</h3>
+                            <p style="font-size: 14px; line-height: 1.7; color: #475569;">
+                                PT Barito Pacific Tbk (IDX: BRPT) mencatatkan pertumbuhan signifikan didorong oleh efisiensi operasional di sektor petrokimia (Chandra Asri) dan energi panas bumi (Barito Renewables).
+                            </p>
+                            <a href="https://www.barito-pacific.com/investor-relation/financial-reports" target="_blank" class="web-link">Buka Laporan Lengkap <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="card" style="padding: 25px;">
+                        <h4 style="margin-bottom: 20px; color: var(--primary); font-family: 'Montserrat', sans-serif;">Akses Cepat</h4>
+                        <ul class="quick-link-list" style="list-style: none; padding: 0;">
+                            
+                            <li style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                                <a href="https://barito-pacific.com/about-us" target="_blank">Tentang Kami</a>
+                                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                            </li>
+                            
+                            <li style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                                <a href="https://barito-pacific.com/our-business" target="_blank">Struktur Bisnis</a>
+                                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                            </li>
+
+                            <li style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center;">
+                                <a href="https://barito-pacific.com/investors" target="_blank">Hubungan Investor</a>
+                                <i class="fa-solid fa-chevron-right" style="font-size: 10px;"></i>
+                            </li>
+                        </ul>
+                        <div style="margin-top: 30px; text-align: center;">
+                            <a href="https://www.barito-pacific.com/" target="_blank" class="btn-glow" style="width: 100%;">Kunjungi Website Utama</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="news" class="slide-section">
+            <span class="subtitle">Berita Terkini</span>
+            <h1 class="page-title">Newsroom & Rilis Media</h1>
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterNews('all', this)">Semua</button>
+                <button class="filter-btn" onclick="filterNews('esg', this)">ESG & Lingkungan</button>
+                <button class="filter-btn" onclick="filterNews('finance', this)">Keuangan</button>
+            </div>
+            <div class="card" id="news-list-container" style="min-height: 200px; padding: 10px;"></div>
+        </div>
+
+        <div id="profile" class="slide-section">
+            <span class="subtitle">Tentang Korporasi</span>
+            <h1 class="page-title">Profil & Struktur</h1>
+            
+            <div style="display: flex; gap: 30px; flex-wrap: wrap;">
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="card" style="height: 100%; border-left: 4px solid var(--primary);">
+                        <h3 style="color: #fff; margin-bottom: 10px;">Visi</h3>
+                        <p style="color: #cbd5e1; font-style: italic; font-size: 15px; line-height: 1.8;">
+                            "Menjadi perusahaan pengembang properti terkemuka, inovatif, dan tepercaya."
+                        </p>
+                    </div>
+                </div>
+                <div style="flex: 1; min-width: 300px;">
+                    <div class="card" style="height: 100%; border-left: 4px solid var(--accent-blue);">
+                        <h3 style="color: #fff; margin-bottom: 10px;">Misi</h3>
+                        <p style="color: #cbd5e1; font-size: 15px; line-height: 1.8;">
+                            "Mengembangkan, mengakuisisi, dan mengelola beragam portofolio pengembangan properti berkualitas dengan standar profesionalisme dan integritas tertinggi."
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="org-section">
+                <h2 style="margin-bottom: 25px; font-size: 1.6rem; color: #fff;">Struktur Organisasi</h2>
+                <div class="card" style="text-align: center; margin-bottom: 30px; border-top: 4px solid var(--primary); padding: 40px;">
+                    <i class="fa-solid fa-sitemap fa-2x" style="color: var(--primary); margin-bottom: 15px;"></i>
+                    <h3 style="color: #fff; font-size: 18px;">Rapat Umum Pemegang Saham (RUPS)</h3>
+                    <p style="font-size: 14px; color: var(--text-muted);">Pemegang kekuasaan tertinggi dalam struktur korporasi.</p>
+                </div>
+                <div class="grid-container">
+                    <div class="card org-card">
+                        <div class="org-title">Dewan Komisaris</div>
+                        <p style="font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+                            Bertugas melakukan pengawasan strategis terhadap kebijakan perusahaan. Dewan ini biasanya diisi oleh figur senior yang memastikan perusahaan berjalan sesuai visi jangka panjang (saat ini dipimpin oleh Prajogo Pangestu sebagai Komisaris Utama).
+                        </p>
+                    </div>
+                    <div class="card org-card" style="border-color: var(--accent-blue);">
+                        <div class="org-title" style="color: var(--accent-blue);">Direksi</div>
+                        <p style="font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+                            Dipimpin oleh Direktur Utama, tim ini bertanggung jawab penuh atas operasional harian dan eksekusi strategi bisnis di seluruh anak usaha.
+                        </p>
+                    </div>
+                    <div class="card org-card" style="border-color: #eab308;">
+                        <div class="org-title" style="color: #eab308;">Komite Penunjang</div>
+                        <p style="font-size: 13px; color: #cbd5e1; line-height: 1.6;">
+                            Termasuk Komite Audit serta Komite Nominasi dan Remunerasi yang membantu fungsi pengawasan Dewan Komisaris.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="org-section">
+                <h2 style="margin-bottom: 25px; font-size: 1.6rem; color: #fff;">Portofolio Bisnis</h2>
+                <div class="grid-container">
+                    <div class="card">
+                        <div class="portfolio-icon"><i class="fa-solid fa-flask"></i></div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 10px;">Petrokimia (TPIA)</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                            Ini adalah "mesin uang" utama grup. Chandra Asri merupakan produsen petrokimia terintegrasi terbesar di Indonesia. Mereka memproduksi Olefins (seperti Etilena, Propilena) dan Polyolefins (bahan baku plastik) yang menjadi fondasi bagi berbagai industri manufaktur di tanah air.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="portfolio-icon" style="color: #eab308; background: rgba(234, 179, 8, 0.1); border-color: rgba(234, 179, 8, 0.2);"><i class="fa-solid fa-leaf"></i></div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 10px;">Energi Terbarukan (BREN)</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                            Unit ini fokus pada penyediaan energi bersih. Aset utamanya adalah Star Energy Geothermal, yang merupakan salah satu operator panas bumi (geotermal) terbesar di dunia. Ini menunjukkan komitmen grup dalam mendukung transisi energi hijau di Indonesia.
+                        </p>
+                    </div>
+                    <div class="card">
+                        <div class="portfolio-icon" style="color: var(--accent-blue); background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.2);"><i class="fa-solid fa-city"></i></div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 10px;">Properti & Industri</h3>
+                        <p style="font-size: 13px; color: var(--text-muted); line-height: 1.6;">
+                            Melalui anak usaha seperti PT Griya Idola, grup ini juga mengembangkan aset properti komersial dan industri, serta pengelolaan kawasan logistik.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="gallery" class="slide-section">
+            <span class="subtitle">Dokumentasi & Aset</span>
+            <h1 class="page-title">Galeri Operasional</h1>
+            
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Portofolio aset strategis dan program keberlanjutan Barito Pacific Group.</p>
+
+            <div class="gallery-grid">
+                <div class="gallery-item">
+                    <img src="https://photos.idnfinancials.com/static/web/2025/CANDRA%20ASRI%20TPIA.jpg" alt="Chandra Asri">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Petrokimia</span>
+                        <div class="gallery-title">Kompleks Chandra Asri Pacific</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Cilegon, Banten</div>
+                        <p class="gallery-desc">
+                            Kompleks petrokimia terintegrasi terbesar di Indonesia. Memproduksi Olefins dan Polyolefins sebagai bahan baku vital bagi industri hilir nasional, mendukung kemandirian manufaktur Indonesia.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1466611653911-95081537e5b7?auto=format&fit=crop&w=800&q=80" alt="Geothermal">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Energi Hijau</span>
+                        <div class="gallery-title">Star Energy Wayang Windu</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Bandung, Jawa Barat</div>
+                        <p class="gallery-desc">
+                            Pembangkit listrik tenaga panas bumi (PLTP) kelas dunia dengan efisiensi tinggi. Berkontribusi signifikan dalam pengurangan emisi karbon dan mendukung transisi energi nasional menuju Net Zero.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=800&q=80" alt="Griya Idola">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Properti</span>
+                        <div class="gallery-title">Griya Idola Industrial Park</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Cikupa, Tangerang</div>
+                        <p class="gallery-desc">
+                            Kawasan industri modern dan terintegrasi yang dirancang untuk mendukung operasional bisnis yang efisien. Dilengkapi infrastruktur canggih dan manajemen kawasan profesional.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1544725121-be3bf52e2dc8?auto=format&fit=crop&w=800&q=80" alt="CSR Bakti Barito">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Yayasan Bakti Barito</span>
+                        <div class="gallery-title">Program Pendidikan & Lingkungan</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Sekolah Adiwiyata</div>
+                        <p class="gallery-desc">
+                            Komitmen sosial melalui inisiatif "Green Guardian", fokus pada peningkatan kualitas pendidikan dan kesadaran lingkungan di sekolah-sekolah sekitar area operasional perusahaan.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80" alt="Office">
+                    <div class="gallery-overlay">
+                        <span class="gallery-cat">Headquarters</span>
+                        <div class="gallery-title">Wisma Barito Pacific</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-location-dot"></i> Slipi, Jakarta Barat</div>
+                        <p class="gallery-desc">
+                            Pusat pengambilan keputusan strategis dan tata kelola perusahaan. Menjadi simbol integritas dan inovasi dalam mengarahkan pertumbuhan berkelanjutan grup Barito Pacific.
+                        </p>
+                    </div>
+                </div>
+
+                 <div class="gallery-item">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=80" alt="Sustainability Report Data">
+                    <div class="report-icon-overlay">
+                        <i class="fa-solid fa-file-pdf fa-xl" style="color: var(--primary);"></i>
+                    </div>
+                    <div class="gallery-overlay">
+                        <div class="gallery-title">Sustainability Report 2024</div>
+                        <div class="gallery-loc"><i class="fa-solid fa-file-arrow-down"></i> Unduh Dokumen PDF</div>
+                        <p class="gallery-desc">
+                            Dokumen lengkap transparansi kinerja Lingkungan, Sosial, dan Tata Kelola (ESG) Barito Pacific Group. Menegaskan komitmen kami terhadap pertumbuhan yang berkelanjutan dan bertanggung jawab.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="slide-section">
+            <span class="subtitle">Hubungi Kami</span>
+            <h1 class="page-title">Informasi Kontak</h1>
+            <div style="max-width: 650px;">
+                <div class="card">
+                    <form>
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Nama Lengkap</label>
+                            <input type="text" placeholder="Masukkan nama Anda">
+                        </div>
+                        <div style="margin-bottom: 25px;">
+                            <label style="display: block; margin-bottom: 10px; font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase;">Pesan Anda</label>
+                            <textarea rows="5" placeholder="Tulis pesan atau pertanyaan..."></textarea>
+                        </div>
+                        <button type="button" class="btn-glow" style="width: 100%; padding: 15px;">Kirim Pesan</button>
+                    </form>
+                    <div style="margin-top: 30px; padding-top: 25px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around;">
+                        <div style="text-align: center;">
+                            <div style="color: var(--primary); font-size: 20px; margin-bottom: 8px;"><i class="fa-solid fa-envelope"></i></div>
+                            <p style="font-size: 13px; color: #fff; font-weight: 500;">media@barito-pacific.com</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="color: var(--primary); font-size: 20px; margin-bottom: 8px;"><i class="fa-solid fa-phone"></i></div>
+                             <p style="font-size: 13px; color: #fff; font-weight: 500;">+62 21 532 7630</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="newsModal">
+        <div class="modal-content">
+            <div class="close-modal" onclick="closeModal()"><i class="fa-solid fa-xmark"></i></div>
+            <span class="subtitle" id="modalCategory">Kategori</span>
+            <h2 id="modalTitle" style="margin: 15px 0; font-family: 'Montserrat', sans-serif; font-size: 1.8rem; color: #fff;">Judul Berita</h2>
+            <div style="display: flex; gap: 15px; margin-bottom: 25px; font-size: 13px; color: var(--text-muted); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;">
+                <span id="modalDate">Date</span> | Admin Barito
+            </div>
+            <p id="modalBody" style="line-height: 1.8; color: #cbd5e1; font-size: 15px;">Isi berita...</p>
+            <div style="margin-top: 35px; text-align: right;">
+                <button class="btn-glow" onclick="closeModal()">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const newsDatabase = [
+            { 
+                id: 1, 
+                category: 'esg', 
+                dateDay: '03', 
+                dateMonth: 'NOV', 
+                title: 'Peluncuran Kampanye "Energi Hijau untuk Generasi Masa Depan"', 
+                summary: 'Kerjasama dengan KLHK guna tingkatkan kesadaran lingkungan di Sekolah Adiwiyata Nasional.', 
+                fullContent: `
+                    <strong>JAKARTA, 3 November 2025</strong> – PT Barito Pacific Tbk (BRPT) hari ini mengumumkan peluncuran kampanye sosial "Energi Hijau untuk Generasi Masa Depan". Bekerja sama dengan Kementerian Lingkungan Hidup dan Kehutanan (KLHK) serta Yayasan Bakti Barito, kampanye ini bertujuan memperkuat kesadaran lingkungan siswa di 1.000 sekolah Adiwiyata nasional.<br><br>
+                    
+                    Peluncuran kampanye ini digelar di Jakarta dan diumumkan pada hari ini melalui acara virtual dan tatap muka.<br><br>
+
+                    Kampanye ini berfokus pada pengembangan dua instrumen baru berbasis digital untuk menilai dan meningkatkan kesadaran siswa terhadap isu energi hijau. Program ini juga akan mencakup serangkaian workshop dan penyediaan materi edukasi interaktif bagi guru dan siswa.<br><br>
+
+                    "Melalui kampanye ini, kami tidak hanya mempromosikan energi terbarukan dari aset geotermal kami, tetapi juga membangun fondasi berkelanjutan untuk Indonesia. Ini adalah bentuk tanggung jawab sosial kami sebagai perusahaan energi terdepan," kata Prajogo Pangestu, Komisaris Utama PT Barito Pacific Tbk, dalam sambutannya.<br><br>
+
+                    Kampanye "Energi Hijau untuk Generasi Masa Depan", yang didanai dengan anggaran awal Rp 50 miliar, akan berlangsung hingga akhir 2026. Fase pertama program akan berfokus pada pelatihan guru di sekolah-sekolah Adiwiyata di wilayah Jawa Barat dan Sumatera.
+                `
+            },
+            { 
+                id: 2, 
+                category: 'finance', 
+                dateDay: '28', 
+                dateMonth: 'OKT', 
+                title: 'Laporan Keuangan Q3: Laba Bersih Tumbuh Stabil', 
+                summary: 'Laba bersih tumbuh stabil.', 
+                fullContent: `
+                    <strong>JAKARTA</strong> - PT Barito Pacific Tbk (BRPT) melaporkan kinerja keuangan yang solid untuk kuartal ketiga tahun 2025. Pendapatan konsolidasi perseroan tetap stabil meskipun terdapat tantangan volatilitas di pasar global.<br><br>
+                    
+                    Pertumbuhan ini terutama didorong oleh efisiensi operasional yang berkelanjutan di anak perusahaan utama, yaitu PT Chandra Asri Pacific Tbk di sektor petrokimia dan PT Barito Renewables Energy Tbk di sektor energi terbarukan.<br><br>
+                    
+                    Manajemen optimis dapat menutup tahun buku 2025 dengan kinerja positif, seiring dengan pemulihan permintaan produk petrokimia dan kontribusi stabil dari aset geotermal.
+                `
+            },
+            { 
+                id: 3, 
+                category: 'esg', 
+                dateDay: '15', 
+                dateMonth: 'OKT', 
+                title: 'Penghargaan PROPER Emas untuk Unit Wayang Windu', 
+                summary: 'Star Energy meraih penghargaan.', 
+                fullContent: `
+                    <strong>BANDUNG</strong> - Unit operasi Star Energy Geothermal Wayang Windu, anak usaha dari Barito Renewables, kembali dianugerahi penghargaan PROPER Emas oleh Kementerian Lingkungan Hidup dan Kehutanan (KLHK).<br><br>
+                    
+                    Penghargaan ini merupakan bentuk pengakuan tertinggi dari pemerintah atas komitmen perusahaan dalam pengelolaan lingkungan dan pemberdayaan masyarakat (Community Development) yang melampaui ketaatan (beyond compliance).<br><br>
+                    
+                    Star Energy dinilai sukses dalam menjaga keanekaragaman hayati di sekitar wilayah operasi panas bumi serta memberdayakan ekonomi masyarakat lokal melalui berbagai program CSR yang inovatif.
+                `
+            },
+            { 
+                id: 4, 
+                category: 'finance', 
+                dateDay: '10', 
+                dateMonth: 'SEP', 
+                title: 'Ekspansi Aset Geotermal: Akuisisi Ladang Baru', 
+                summary: 'Akuisisi ladang baru.', 
+                fullContent: `
+                    <strong>JAKARTA</strong> - Sebagai langkah strategis untuk memperkuat portofolio energi hijau, PT Barito Renewables Energy Tbk mengumumkan rencana ekspansi aset melalui akuisisi ladang angin (PLTB) baru di wilayah Sulawesi Selatan.<br><br>
+                    
+                    Langkah ini sejalan dengan visi grup untuk mendiversifikasi sumber energi terbarukan di luar panas bumi. Proyek ini diharapkan dapat menambah kapasitas total energi bersih perseroan sebesar 75 MW ke dalam jaringan listrik nasional, mendukung target bauran energi pemerintah.
+                `
+            }
+        ];
+
+        function switchSlide(slideId, btnElement) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            document.querySelectorAll('.slide-section').forEach(slide => slide.classList.remove('active'));
+            setTimeout(() => { document.getElementById(slideId).classList.add('active'); }, 50);
+        }
+
+        function renderNews(filterType = 'all') {
+            const container = document.getElementById('news-list-container');
+            container.innerHTML = ''; 
+            const filteredData = filterType === 'all' ? newsDatabase : newsDatabase.filter(item => item.category === filterType);
+            
+            filteredData.forEach(item => {
+                const html = `
+                    <div class="news-item">
+                        <div class="news-date">
+                            <div style="font-size: 11px;">${item.dateMonth}</div>
+                            <div style="font-size: 22px;">${item.dateDay}</div>
+                        </div>
+                        <div style="flex: 1;">
+                            <h3 style="margin-bottom: 6px; font-size: 1.1rem; color: #fff;">${item.title}</h3>
+                            <p style="color: var(--text-muted); font-size: 14px;">${item.summary}</p>
+                            <button class="btn-glow" style="padding: 8px 20px; margin-top:10px;" onclick="openModal(${item.id})">Baca</button>
+                        </div>
+                    </div>`;
+                container.innerHTML += html;
+            });
+        }
+
+        function filterNews(category, btnElement) {
+            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+            renderNews(category);
+        }
+
+        function openModal(id) {
+            const news = newsDatabase.find(item => item.id === id);
+            if(news) {
+                document.getElementById('modalCategory').innerText = news.category;
+                document.getElementById('modalTitle').innerText = news.title;
+                document.getElementById('modalBody').innerHTML = news.fullContent; // Changed to innerHTML for HTML content support
+                document.getElementById('newsModal').classList.add('open');
+            }
+        }
+        function closeModal() { document.getElementById('newsModal').classList.remove('open'); }
+        document.getElementById('newsModal').addEventListener('click', function(e) { if(e.target === this) closeModal(); });
+
+        document.addEventListener('DOMContentLoaded', () => { renderNews('all'); });
+    </script>
+</body>
+</html>
